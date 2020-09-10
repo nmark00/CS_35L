@@ -1,0 +1,255 @@
+1.
+man -k [specific word]
+
+First I used 'man man' to find the argument needed to print all commands with a specific word in their man page.
+Then I tested 'man -k' a few times to make sure.
+Commands:
+man man
+man -k list
+man -k move
+
+
+2.
+mv: /usr/bin/mv  /usr/local/cs/bin/mv
+sh: /usr/bin/sh
+
+I used the whereis command to find where 'mv' and 'sh' are located
+Commands:
+whereis mv
+whereis sh
+
+
+3.
+/usr/bin/pr
+/usr/bin/ar
+/usr/bin/tr
+
+I searched the man page for 'find' to get a more specific search.
+The '-executable' would only match with executable files, and to limit the name search, I can use '-name' paired with '?r'.
+The '?' represents one character, the files we want have to end in 'r'.
+Finally, I want to limit my search to the /usr/bin directory, so I can use that as the first arugment for find.
+Commands:
+man find
+find /usr/bin -executable -name ?r
+
+
+4.
+/etc/alternatives/emacs
+
+Since we knew that '/usr/bin/emacs' was a symbolic link, I used 'man -k' to find a command to trace the actual file.
+Commands:
+man -k symbolic link
+man readlink
+readlink /usr/bin/emacs
+
+
+5.
+plain gcc: gcc (GCC) 9.2.0
+/usr/bin/gcc: gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+
+The /usr/bin/gcc program has not been updated to the new version that the plain gcc is on.
+
+To find the version, I knew the command was '--version'
+Commands:
+/usr/bin/gcc --version
+/usr/local/cs/bin/gcc --version
+
+
+6.
+The user gains permissions to execute, while other loses permission to write/
+
+I used the man pages of 'chmod' to understand the expression
+Commands:
+man chmod
+
+
+7.
+/usr/local/cs
+/usr/local/cs/src/grep
+/usr/local/cs/src/grep/RCS
+/usr/local/cs/share/info
+/usr/local/cs/share/man/man1
+/usr/local/cs/bin
+/usr/local/cs/.del
+/usr/local/cs/.del/grep-3.3
+/usr/local/cs/grep-3.4
+/usr/local/cs/grep-3.4/share
+/usr/local/cs/grep-3.4/share/locale
+/usr/local/cs/grep-3.4/share/locale/af
+/usr/local/cs/grep-3.4/share/locale/af/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/be
+/usr/local/cs/grep-3.4/share/locale/be/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/bg
+/usr/local/cs/grep-3.4/share/locale/bg/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ca
+/usr/local/cs/grep-3.4/share/locale/ca/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/cs
+/usr/local/cs/grep-3.4/share/locale/cs/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/da
+/usr/local/cs/grep-3.4/share/locale/da/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/de
+/usr/local/cs/grep-3.4/share/locale/de/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/el
+/usr/local/cs/grep-3.4/share/locale/el/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/eo
+/usr/local/cs/grep-3.4/share/locale/eo/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/es
+/usr/local/cs/grep-3.4/share/locale/es/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/et
+/usr/local/cs/grep-3.4/share/locale/et/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/eu
+/usr/local/cs/grep-3.4/share/locale/eu/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/fi
+/usr/local/cs/grep-3.4/share/locale/fi/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/fr
+/usr/local/cs/grep-3.4/share/locale/fr/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ga
+/usr/local/cs/grep-3.4/share/locale/ga/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/gl
+/usr/local/cs/grep-3.4/share/locale/gl/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/he
+/usr/local/cs/grep-3.4/share/locale/he/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/hr
+/usr/local/cs/grep-3.4/share/locale/hr/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/hu
+/usr/local/cs/grep-3.4/share/locale/hu/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/id
+/usr/local/cs/grep-3.4/share/locale/id/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/it
+/usr/local/cs/grep-3.4/share/locale/it/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ja
+/usr/local/cs/grep-3.4/share/locale/ja/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ko
+/usr/local/cs/grep-3.4/share/locale/ko/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ky
+/usr/local/cs/grep-3.4/share/locale/ky/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/lt
+/usr/local/cs/grep-3.4/share/locale/lt/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/nb
+/usr/local/cs/grep-3.4/share/locale/nb/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/nl
+/usr/local/cs/grep-3.4/share/locale/nl/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/pa
+/usr/local/cs/grep-3.4/share/locale/pa/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/pl
+/usr/local/cs/grep-3.4/share/locale/pl/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/pt
+/usr/local/cs/grep-3.4/share/locale/pt/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/pt_BR
+/usr/local/cs/grep-3.4/share/locale/pt_BR/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ro
+/usr/local/cs/grep-3.4/share/locale/ro/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/ru
+/usr/local/cs/grep-3.4/share/locale/ru/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/sk
+/usr/local/cs/grep-3.4/share/locale/sk/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/sl
+/usr/local/cs/grep-3.4/share/locale/sl/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/sr
+/usr/local/cs/grep-3.4/share/locale/sr/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/sv
+/usr/local/cs/grep-3.4/share/locale/sv/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/th
+/usr/local/cs/grep-3.4/share/locale/th/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/tr
+/usr/local/cs/grep-3.4/share/locale/tr/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/uk
+/usr/local/cs/grep-3.4/share/locale/uk/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/vi
+/usr/local/cs/grep-3.4/share/locale/vi/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/zh_CN
+/usr/local/cs/grep-3.4/share/locale/zh_CN/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/locale/zh_TW
+/usr/local/cs/grep-3.4/share/locale/zh_TW/LC_MESSAGES
+/usr/local/cs/grep-3.4/share/man
+/usr/local/cs/grep-3.4/share/man/man1
+/usr/local/cs/grep-3.4/share/info
+/usr/local/cs/grep-3.4/bin
+
+I used the man pages of 'find' to find an argument that specifies the last time a file was changed.
+The '-mtime -28' is used to locate files modified  less than 4 weeks ago.
+'-type d' isolates the search to directories
+Commmands:
+man find
+find /usr/local/cs -type d -mtime -28
+
+
+8.
+280 symbolic links
+
+To locate the directory of 'find', I used the 'whereis' command; it is in '/usr/bin'.
+Then I could do a '-type' search using symbolic link type.
+I then piped the command with 'wc -l' to count the number of new lines.
+Commands:
+man find
+man wc
+whereis find
+find /usr/bin -type l | wc -l
+
+
+9.
+librom1394.so.0.3.0
+
+I used the man pages for 'ls' to find the arguments needed to hone my search and include hidden files.
+Commands:
+man ls
+ls /usr/lib64 -lta
+
+
+10.
+The locale command gets its data from environment variables.
+
+I used the man pages for locale and locale(7) to find where locale gets its data from.
+Commands:
+man locale
+man 7 locale
+
+
+11.
+downcase-region
+downcase-word
+
+I used the search command on emacs: C-h a
+Commands:
+C-h a  d o w n c a s e
+
+12.
+C-M-r: Do incremental search backward for regular expression.
+C-M-s: Do incremental search forward for regular expression.
+C-M-t: Interchange words around point, leaving point at end of them.
+C-M-u: Move backward out of one level of parentheses.
+C-M-v: Scroll next window upward ARG lines; or near full screen if no ARG.
+
+Commands:
+C-h k C-M-r
+C-h k C-M-s
+C-h k C-M-t
+C-h k C-M-u
+C-h k C-M-v
+
+13.
+The C-g command signals a `quit' condition.
+During execution of Lisp code, this character causes a quit directly.
+At top-level, as an editor command, this simply beeps.
+
+Commands:
+C-h k C-g
+
+
+14.
+The 'yank' command reinserts ("pastes") the last stretch of killed text.
+It is invoked using: C-y
+
+Commands:
+C-h a yank
+
+
+15.
+The 'ls -l' command does not the two files, '.' and '..' when using Emacs 'dired' command. 
+I performed both commands on /usr/bin, and compared the outputs.
+To find the dired command, I used the emacs search command C-h a.
+
+Commands:
+ls -l /usr/bin
+C-h a dired
+C-x d

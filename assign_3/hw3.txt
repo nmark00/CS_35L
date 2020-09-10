@@ -1,0 +1,38 @@
+Q1.
+The patch should marginally improve performance since it removed one if 
+statement:
+-          if (ignore_mode == IGNORE_DEFAULT)
+-            ignore_mode = IGNORE_DOT_AND_DOTDOT;
++          ignore_mode = IGNORE_DOT_AND_DOTDOT;
+           break;
+
+There is one less check the program has to make.
+The patch also does the 'right' behavior when it comes to the order of the ls 
+arguments, so it performs better in that respect.
+
+Q2.
+People will have to watch for the order that they enter -a and -A now.
+Before it didn't matter what order you entered -a -A, but the new version of 
+Coreutils now accounts for that.
+
+Q3.
+When randline.py is invoked on an empty file, it throws the error:
+     IndexError: list index out of range.
+In the code, when it calls the 'choice' function in line 34, it invokes a line,
+   return seq[int(self.random() * len(seq))]
+which raises an IndexError when seq is empty.
+
+Q4.
+When randline.py is run under python3, it gives a SyntaxError on line 65.
+The line is,
+    except IOError as (errno, strerror)
+which is an error message containing a tuple of the error number and error 
+string. 
+Python3 does not support error statements containing a tuple, leading to a 
+syntax error.
+
+Q5.
+When I run shuf.py under Python 2, there are no errors because all of the
+functions used in shuf.py are forward compatible to Python3.
+Even the program was coded in Python 3, all the functions and syntax are 
+valid under Python 2.

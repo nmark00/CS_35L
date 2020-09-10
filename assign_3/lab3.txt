@@ -1,0 +1,75 @@
+1. To grab a copy of Coreutils 8.29, I copied the link and pasted it with wget.
+I did the same thing with the GNU keyring.
+I then ran the command on the assignment page to verify the signature.
+
+
+Commands:
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.29.tar.xz.sig
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+gpg --verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+
+2. I unzipped the tar file and went into the coreutils directory.
+To compile and install my copy of Coreutils, I created a directory 
+coreutils_install where I would be installing my coreutils.
+I read the INSTALL file to learn the exact process of installing coreutils in 
+my temporary directory.
+I needed to add the option --prefix to the configure command, which requires 
+the absolute path to my temporary directory.
+Once I configured the make command, I compiled it with 'make' and installed it 
+with 'make install'.
+
+Commands:
+tar -xvf coreutils-8.29.tar.xz
+cd coreutils-8.29
+mkdir coreutils_install
+emacs INSTALL
+realpath ./coreutils_install
+./configure --prefix=/w/home.23/eng/ugrad/markn/coreutils-8.29/coreutils_install
+make
+make install
+
+3. To reproduce the bug, I cd into my temporary directory, and ran the ls 
+command from bin.
+The bug works as expected, printing out '.' and '..' regardless the order of 
+the -aA option.
+
+Command:
+cd coreutils_install
+./bin/ls -aA #Output: .  ..  bin  libexec  share
+./bin/ls -Aa #Output: .  ..  bin  libexec  share
+./bin/ls -a  #Output: .  ..  bin  libexec  share
+./bin/ls -A  #Output: bin  libexec  share
+
+4. I then created a file for the patch. I copy pasted the patch into this file.
+I read the man pages on patch to find what 'pnum' option to use. p1 leaves out 
+the leading slash and modifies the file path in the patch.
+To apply the patch, I cd out of the temporary directory, and ran the patch 
+command.
+There was one error when applying the patch: 
+      1 out of 1 hunk FAILED -- saving rejects to file NEWS.rej
+
+Command:
+emacs ~/patchFile #copy paste the patch code
+cd .. #enter 'coreutils-8.29' directory
+patch -p1 < ~/patchFile #apply the patch
+
+5. I typed 'make' to recompile it now that it has been updated with the patch.
+I didn't run 'make install' since that would reinstall the executables into the
+temporary directed.
+
+Command:
+make #recompile
+
+6. After the patch was applied, it outputted that the patched ls file was in 
+the src directory.
+To test out the fix, I cd into src and ran the ls command. 
+It behaved as expected.
+The . and .. were not printed with ls -aA
+
+Command:
+cd src
+./ls -aA #Output: '['	     head.o	selinux.h
+                  b2sum      hostid	selinux.o
+./ls -Aa #Output: .	head.c	  selinux.h
+     	 	  ..    head.o    selinux.o

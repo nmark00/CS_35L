@@ -1,0 +1,83 @@
+Exercise 1.1
+2. C-s H T M L RET 
+3. C-s s c RET M-b 
+4. C-s s e RET M-b 
+5. C-s a r r RET M-b 
+6. C-e
+7. C-a
+10. C-x C-c
+
+Exercise 1.2
+2. M-g M-g 1 8 RET C-SP C-n C-n C-n C-n DEL
+3. C-s D E L E RET C-a C-SP C-e DEL
+4. C-s w i k i C-s C-s C-a C-p C-SP C-n C-n C-n DEL
+5. C-s < ! C-b C-b C-SP M-f C-b C-b C-b C-b DEL
+   C-s < ! C-a C-SP C-n C-n C-n C-n DEL 
+   C-s < ! C-a C-SP C-e DEL
+
+Exercise 1.3
+2. C-s A s M-f C-f C-f DEL 4 2 C-s 1 C-s RET DEL 4 2
+3. C-s U T RET DEL S - A S C I I C-SP M-f M-f DEL
+4. M-< M-C-s [ ^ [ : a s c i i : ] ] C-a C-SP C-n C-n C-n DEL
+5. M-< C-s < / o C-e RET
+6. C-x C-s
+
+Exercise 1.4
+3. M-> C-p C-p C-f C-SP C-e M-w M-g M-g 4 5 2 RET C-p C-p C-p C-p C-p C-p C-y
+4. C-s < ! RET C-SP C-n C-n C-e M-w M-g M-g 1 6 RET C-n C-n C-n C-y RET RET
+   M-> C-r < p C-r C-r C-r RET C-SP C-n C-n C-n C-n C-e M-w M-g M-g 4 3 0 C-SP C-e DEL C-y
+   M-> C-r < ! C-r C-r C-r RET C-SP C-n C-n C-e M-w M-g M-g 3 8 4 C-n C-n C-n C-y RET C-p C-f DEL C-p C-f DEL
+   M-> C-r < ! C-r C-r C-r C-r RET C-SP C-e M-w M-g M-g 1 3 1 C-y
+
+5. M-> C-r e n d C-r C-n C-a C-SP M-> DEL 
+6. C-x u 
+7. - - > C-r e n d C-r C-n C-a < ! - - SP C-s - - > RET RET < ! - - C-s - - > RET RET < ! - -C-s - - > RET RET < ! - -C-s - - > RET RET < ! - -C-s - - > RET RET < ! - -
+8. M-x r e p l a c e - s t r i n g RET RET
+
+7 instances of <ol>
+
+Exercise 1.5
+1. C-h a d i r e c t o r y RET C-x o M-x m a k e - d i r e c t o r y RET j u n k RET 
+2. C-x C-f h e l l o . c RET
+3. M-x c o m p i l e RET g c c h e l l o . c RET y
+4. C-x b h e l l o - o u t RET C-u M-! . / a . o  u t RET
+5. C-SP M-> M-w C-x C-f k e y TAB RET M-> C-y
+EOF on input
+
+1.6
+1. C-x b RET
+2. m o s t - n e g a t i v e - f i x n u m C-j m o s t - p o s i t i v e - f i x n u m C-j
+
+( f o r m a t SPC " % x " SPC - 2 3 0 5 8 4 3 0 0 9 2 1 3 6 9 3 9 5 2 ) C-j 
+( f o r m a t SPC " % x " SPC 2 3 0 5 8 4 3 0 0 9 2 1 3 6 9 3 9 5 1 ) C-j
+
+most-negative-fixnum = -2305843009213693952 or 2000000000000000
+most-positive-fixnum = 2305843009213693951 or 1fffffffffffffff
+
+Since there are 16 hex digits, the numbers are 8 bytes.
+This means there are 64 bits, so in bit notation, the most negative number contains the sign bit followed 63 0's so nothing gets added to that number.
+Meanwhile, the most positive number contains all 1's to signify adding the binary digits.
+
+
+3. ( r a n d o m SPC " 3 0 5 1 0 1 3 3 7 " ) C-j
+
+4. ( s e t q SPC x SPC ( r a n d o m ) ) C-j ( s e t q SPC y SPC ( r a n d o m ) ) C-j
+
+5. ( s e t q SPC p SPC ( * SPC x SPC y ) )
+C-j ( s e t q SPC r SPC ( l o g i o r SPC p SPC m o
+s t - n e g a t i v e - f i x n u m ) ) C-j
+
+p = -149591260403027603
+r = -149591260403027603
+
+6. The computed product of x and y is not correct. 
+
+7. The numbers are not truly random because the computer calculates these values based on a seed value. 
+Each seed is unique because we used our unique ID, making them random to some degree.
+We also do not know the function that computes these 'random values', which makes them for our purposes, random.
+
+8. There are 2^64 numbers and the most number of digits the product can have is 64.
+This means that if you add the number of digits of the multipliers, and the sum is greater than 64, the product will be wrong.
+If the numbers are chosen randomly, then there are only 2^32 combinations of numbers whose digits add up to <= 64.
+Since there are 2^64 total combinations, then the probability that the product is correct is (2^32)/(2^64) = 1/(2^32)
+This is about 0.

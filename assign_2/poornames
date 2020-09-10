@@ -1,0 +1,112 @@
+#! /usr/bin/sh
+shopt -s dotglob #ignore . and ..
+declare d
+declare isR=false
+
+setup(){
+# determine which arguments are passed:
+    if [ $# -eq 0 ]; then #0 arguments 
+	d=`pwd` #set directory to current
+    elif [ $# -eq 1 ] && [ $1 == '-r' ]; then #only 1 argument and it's -r
+	d=`pwd` #set directory to current
+	isR=true
+    elif [ $# -eq 1 ]; then #1 argument and it's not -r
+	d=$1
+    elif [ $# -eq 2 ] && [ $1 == '-r' ]; then #2 arguments, first is -r
+	d=$2
+	isR=true
+    else
+	echo "Cannot have more than one initial directory" >&2
+        exit 4
+    fi
+}
+
+checkD(){
+# if D is valid, do nothing, else, exit
+    if [ $d == -* ]; then #D cannot start with -
+	echo "$d cannot start with '-' " >&2 #>&2 means stderr
+	exit 2
+    fi
+    if [ ! -d $d ]; then #D is not a directory
+	echo "$d is not a directory">&2
+	exit 2
+    fi
+}
+
+basicPoornames(){
+    wordArray=()
+    isBad=false
+    for file in $d/*; do 
+	#check if file is NOT a valid string 
+	if [[ ! $file =~ $d/[_A-Za-z][_A-Za-z\.\-]{0,14}$ ]]; then
+	    isBad=true
+	fi
+	#if string is valid, see if it is a duplicate in D
+	for i in "${wordArray[@]}"; do
+	    shopt -s nocasematch #ignore case is on
+	    if [ "$i" == "$file" ]; then #file is a duplicate
+		isBad=true
+		break
+	    fi
+	    shopt -u nocasematch
+	done
+	#add the file to list to check for duplicates
+	wordArray+=($file)
+	
+	#if word fails vaild string test or duplicate test, print it
+        if [ $isBad == true ]; then
+            echo $file
+            isBad=false
+        fi
+    done
+}
+
+recursivePoornames(){
+    wordArray=()
+    isBad=false
+    #loop through every file in directory
+    for file in $1/*; do
+        #check if file is NOT a valid string
+        if [[ ! $file =~ $1/[_A-Za-z][_A-Za-z\.\-]{0,14}$ ]]; then
+            isBad=true
+        fi
+        #if string is valid, see if it is a duplicate in D
+        for i in "${wordArray[@]}"; do
+            shopt -s nocasematch #ignore case is on
+            if [ "$i" == "$file" ]; then #file is a duplicate
+                isBad=true
+                break
+            fi
+	    shopt -u nocasematch
+        done
+        #add the file to list to check for duplicates
+        wordArray+=($file)
+
+	#if word fails vaild string test or duplicate test, print it
+	if [ $isBad == true ]; then
+	    echo $file
+	    isBad=false
+	fi
+
+	#RECURSIVE: check if file is directory
+	if [[ -d $file ]]; then
+	    if [[ ! -r $file ]]; then #read permission denied
+		echo "Cannot open $file" >&2
+	    else
+		recursivePoornames $file
+	    fi
+	fi
+    done
+}
+
+
+main(){
+    setup "$@"
+    checkD "$d"
+    if [ $isR == true ]; then 
+	recursivePoornames "$d"
+    else
+	basicPoornames "$d"
+    fi
+}
+main "$@"

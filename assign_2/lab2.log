@@ -1,0 +1,158 @@
+I first made sure I was in standard C locale environment. 
+Commands:
+export LC_ALL='C' 
+locale
+
+To create 'words', I stored the value of 'sort /usr/share/dict/words' into my 
+own file. I then stored the HTML file into a text file 'assign2.txt'
+
+Commands:
+sort /sur/share/dict/words > words
+curl http://web.cs.ucla.edu/classes/winter20/cs35L/assign/assign2.html > 
+assign2.txt
+
+To find out what each of the 'tr' commands did, I read the man pages, and ran 
+each command to double check.
+
+tr -c 'A-Za-z' '[\n*]'
+This command translates the complement (-c) of 'A-Za-z' to a newline character.
+In other words, every non alphabetical character including spaces is replaced 
+by a newline.
+
+tr -cs 'A-Za-z' '[\n*]'
+This command is like the previous one, but with the 's' argument means that 
+repeated newlines are discounted.
+The command replaces all non alphabetical characters with a newline, and 
+deletes repeated newlines.
+
+tr -cs 'A-Za-z' '[\n*]' | sort
+This command builds off of the last command, but now is piped with a 'sort' 
+command, which prints the output alphabetically. 
+It replaces all non alphabetical characters with a newline, and deletes 
+repeated newlines, but then sorts the words alphabetically.
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u
+This command does the same as the last command, but the '-u' deletes duplicate 
+words.
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+The 'comm' command compares the output of the previous command with the 'words'
+file.
+'comm' outputs 3 columns: the first column is the sorted list of  words unique 
+Assignment 2 HTML file, the second column is the sorted list of words unique to
+'words', and the third column are the lines common to both files.
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words
+This command is like the previous, but the '-23' supresses the output of the 
+second and third collumn. 
+This leavs only the words unique to the HTML file
+
+Commands:
+man tr
+man sort
+man comm
+tr -c 'A-Za-z' '[\n*]' < assign2.txt
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm - words
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm -23 - words
+
+
+I then got my copy of the Hawaiian to English website, using Wget.
+
+Commands:
+wget https://www.mauimapp.com/moolelo/hwnwdshw.htm
+
+To create hwords, I wrote the 'buildwords' script which systematically extracts
+Hawaiian words from the htm file.
+I then gave myself executable permission, and ran the script.
+
+buildwords:
+#! /usr/bin/sh 
+
+# Replace ` with '
+sed s:\`:\':g |
+# Remove all ?
+sed 's/?//g' |
+# Remove commas
+tr -d ',' |
+# Keep only <td> tag
+grep '</td>'$ |
+# Remove all HTML tags
+sed 's/<[^>]*>//g' |
+# Keep only odd lines
+sed 'n; d' |
+# Replace spaces with new lines
+tr -s ' ' '[\n*]' |
+# Keep only hawaiian letters
+grep -vi "[^-pk'mnwlhaeiou]" |
+# Remove blank lines
+grep . |
+# Convert upper case to lowercase
+tr '[:upper:]' '[:lower:]' |
+# Sort and remove duplicates
+sort -u
+
+Commands:
+chmod 744 buildwords
+cat hwnwdshw.htm | ./buildwords | less > hwords
+
+I derived a HAWAIIANCHECKER command, that checks the spelling of Hawaiian based
+on hwords.
+Instead of using A-Za-z, I need to use the Hawaiian letters, and repalce all ` 
+with '
+Everything must be lowercased since hwords only contains lowercase letters.
+I ran my HAWAIIANCHECKER command on the webpage and 'hwords', and counted the 
+number of misspelled words.
+
+HAWAIIANCHECKER on hwords: 0 misspelled words
+HAWAIIANCHECKER on assign2: 560 misspelled words
+ENGLISHCHECKER on assign2: 48 misspelled words
+
+Commands:
+sed s:\`:\':g < assign2.html | tr -cs "'A-Za-z" '[\n*]' | tr '[:upper:]' 
+ '[:lower:]' | sort -u | comm -23 - hwords > hwn_misspell
+
+wc -w hwn_misspell
+
+
+sed s:\`:\':g < hwords | tr -cs "'A-Za-z" '[\n*]' | tr '[:upper:]' '[:lower:]'
+ | sort -u | comm -23 - hwords > hwn_misspell
+
+wc -w hwn_misspell
+
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | tr '[:upper:]' '[:lower:]' | sort -u |
+ comm -23 - words > eng_misspell
+
+wc -w eng_misspell
+
+
+I checked how many words were reported by ENGLISHCHECKER and not 
+HAWAIIANCHECKER, and visa versa.
+I had to consider that some Hawaiian words contain apostrophes, so I had to 
+delete them when comparing to English words.
+
+501 words reported by HAWAIIANCHECKER, that were not reported by 
+ENGLISHCHECKER.
+Example: 'able', 'about'
+
+2 words reported by ENGLISHCHECKER, that were not reported by HAWAIIANCHECKER.
+Example: 'lau', 'wiki'
+
+Commands:
+tr -cs 'A-Za-z' '[\n*]' < hwn_misspell | sort -u | comm -23 - eng_misspell > 
+hnum_misspell
+
+wc -w hnum_misspell
+
+cat hnum_misspell
+
+
+tr -cs 'A-Za-z' '[\n*]' < hwn_misspell | sort -u | comm -13 - eng_misspell > 
+enum_misspell
+
+wc -w enum_misspell
+
+cat enum_misspell

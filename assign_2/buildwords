@@ -1,0 +1,24 @@
+#! /usr/bin/sh
+
+# Replace ` with '
+sed s:\`:\':g |
+# Remove all ?
+sed 's/?//g' |
+# Remove commas
+tr -d ',' |
+# Keep only <td> tag
+grep '</td>'$ |
+# Remove all HTML tags 
+sed 's/<[^>]*>//g' |
+# Keep only odd lines
+sed 'n; d' |
+# Replace spaces with new lines
+tr -s ' ' '[\n*]' |
+# Keep only hawaiian letters
+grep -vi "[^pk'mnwlhaeiou]" |
+# Remove blank lines
+grep . |
+# Convert upper case to lowercase
+tr '[:upper:]' '[:lower:]' |
+# Sort and remove duplicates
+sort -u  

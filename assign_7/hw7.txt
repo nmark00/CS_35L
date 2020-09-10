@@ -1,0 +1,72 @@
+hw7.txt
+
+2.
+git clone ~eggert/src/gnu/diffutils
+git checkout -b quote v3.0
+Switched to a new branch 'quote'
+
+
+3.
+patch -p1 ~/diffutils/quote-3.0-patch.txt
+patching file src/cmp.c
+patching file src/diff.c
+patching file src/diff3.c
+patching file src/dir.c
+patching file src/sdiff.c
+patching file src/util.c
+
+5.
+For each of the above files, I composed an message in the ChangeLog entry
+for my patch.
+$ emacs [file]
+C-x 4 a
+Changed ` to '
+
+6.
+I then committed by changed to the new branch using the ChangeLog entry as the 
+commit message.
+$ git add .
+$ git commit -F ./src/ChangeLog
+
+7.
+I then created a new patch formatted-patch.txt
+$ git format-patch -1 --stdout > formatted-patch.txt
+
+8.
+To verify that the clone's version works, I made a new branch called "patchery"
+and applied the git am command. Then built the resulting system and checked that
+it works with make check.
+$ git checkout v3.0 -b patchery
+$ git am < formatted-patch.txt
+$ ./bootstrap
+$ cd lib
+$ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/diffutils-gets.diff
+$ patch -p1 < diffutils-gets.diff
+$ cd ..
+$ ./configure
+$ make
+$ make check
+
+I tested the diff command to make sure it outputted the correct character.
+$ diff . -
+$ diff --help
+
+Both of these cases did not output `
+
+9.
+I verified that my ChangeLog entry works by running make distdir and inspecting 
+the resulting ChangeLog file.
+$ make distdir
+
+10.
+I cd into emacs git repository and ran the gitk command on it.
+$ cd ~eggert/src/gnu/emacs-CS-35L/
+$ gitk
+
+The top left window shows all the commits made for the repository. All of the 
+commits are shown visually with a dot and the branches that connect them are 
+represented as lines. The top middle window shows the author of each commit, and
+the top right shows the time that the commit was made. 
+The bottom right shows the comments of the commit, and the bottom left shows the
+details about the commit. It has information on the changes, and branches, and 
+author.

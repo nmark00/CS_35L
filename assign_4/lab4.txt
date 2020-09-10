@@ -1,0 +1,133 @@
+lab4.txt
+
+I grabbed my version of coreutils using wget, and then unzipped the tar file.
+
+Commands:
+$ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/coreutils-with-bug.tar
+$ tar -xvf coreutils-with-bug.tar
+
+Then I cd into the coreutils-with-bug directory to build this version as is. I created
+a temporary directory, coreutils_install, and ran the "configure" command to make 
+my copy of coreutils inside my temporary directory.
+I then ran the "make" command to compile coreutils, and the "make install" command
+to install it in my temporary directory.
+
+Commands:
+$ cd coreutils-with-bug
+$ mkdir coreutils_install
+$ realpath ./coreutils_install
+$ ./configure --prefix=/w/home.23/eng/ugrad/markn/coreutils-with-bug/coreutils_install
+$ make
+$ make install
+
+When trying to build the old version of coreutils as-is, I got an error: 
+conflicting types for 'futimens'
+
+To fix this error, I applied the patch using the "patch" command, then rebuilt 
+this older version of coreutils.
+
+Commands:
+$ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/coreutils.diff #get the patch
+$ cd .. #cd into coreutils-with-bug
+$ patch -p0 <coreutils.diff #apply the patch
+$ make #compile coreutils
+$ make install #install it in coreutils_install
+
+There were no errors this time because in the non-patched version, the variable 
+'futimes' was declared more than once. The patch just renamed one of the futimes to 
+'coreutils_futimens' which allowed everything to be compiled.
+
+I recreated the bug by following the given commands. I made sure to use the "ls" command in the older version of coreutils.
+
+Commands:
+$ tmp=$(mktemp -d)
+$ cd $tmp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+$ touch now
+$ sleep 1
+$ touch now1
+$ TZ=UTC0 ~/coreutils-with-bug/coreutils_install/bin/ls -lt --full-time wwi-armistice-cs35L now now1
+-rw-r--r-- 1 markn engugrad 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice-cs35L
+-rw-r--r-- 1 markn engugrad 0 2020-02-03 23:36:03.787114591 +0000 now1
+-rw-r--r-- 1 markn engugrad 0 2020-02-03 23:35:57.131910992 +0000 now
+
+the 'ls -lt --full-time' command is supposed to list files in chronological order with the newest file listed first.
+The bug is that the file from 1918 was listed above all files created today.
+
+To patch the file, I needed to know the error, which meant using gdb to check which functions were being called.
+I needed to set a breakpoint somewhere, so I needed to take a look at the c code for ls, located in the src directory. 
+I looked at the function declarations to see which one was responsible for sorting the files.
+Using emacs, I used the search command on the word 'sort', and found a 'sort_files' function.
+
+Commands:
+$ cd ~/coreutils-with-bug/src/ #go inside src since ls.c is located here
+$ emacs ls.c
+C-s s o r t RET
+C-s s o r t _ f i l e s RET
+C-x C-c
+
+Using gdb, I set a breakpoint at 'sort_files' and ran 'ls' using our given arguments (-lt --full-time).
+After opening the layout c code, I then next intructioned until I saw which function was called given our input arguements.
+
+Commands:
+$ gdb ~/coreutils-with-bug/coreutils_install/bin/ls 
+b sort_files
+r -lt --full-time
+layout c
+ni
+n
+
+With our given arguments, sort_files calls compare_mtime function. I switched back to emacs to see the c code for compare_mtime
+Under that function, it called another function 'cmp_mtime' and after jumping to 'cmp_mtime', I found out that it called 'timespec_cmp' function, which is not implemented in ls.c.
+After listing the files under 'src' directory (using ls), it was clear that 'timespec' was not in this directory. I used the find command to locate 'timespec'.
+
+Commands:
+C-s c o m p a r e _ m t i m e RET
+C-s c m p _ m t i m e RET
+$ ls #check if timespec is in src directory
+$ find .. -name "timespec*" #seach for files with 'timespec' starting from parent directory
+../m4/timespec.m4
+../lib/timespec.h
+../lib/timespec.h~
+
+
+I went cd into the 'lib' directory, to find that there was a header file 'timespec.h' which I opened with emacs.
+Finally, I found the implementation of 'timespec_cmp', which did not call another function. 
+There, I found the bug. The function defined the int 'diff' as 'a.tv_sec - b.tv_sec', which under extreme times, will cause a integer overflow.
+To correct this, I replaced the subtraction with a compare statment. I created a copy of timespec.h inside my coreutils_install, where I would fix the bug.
+
+Commands:
+$ cd ../lib
+$ emacs timespec.h
+$ cp cp timespec.h ../coreutils_install/
+$ emacs ../coreutils_install/timespec.h
+
+
+To create the diff file, I ran the diff command, and stored it in a patchFile.
+I cd into coreutils_install and used emacs to construct a ChangeLog for my patchFile.
+I then stored the contents of the ChangeLog into my lab4.diff, and then appended it with the contents of the patchFile.
+
+Commands:
+$ diff -u ./timespec.h ../coreutils_install/timespec.h > ../coreutils_install/patchFile
+$ emacs patchFile #create ChangeLog inside emacs
+	C-x 4 a
+	C-x C-s
+	C-x C-c
+$ cat ChangeLog > ~/lab4.diff
+$ cat patchFile >> ~/lab4.diff
+
+
+I recreated the bug under my home directory on SEASnet Linux servers. I repeated
+the commands as if I were in the $tmp directory. The bug 'worked' on SEASnet, however SEASnet outputted a completely different year for wwi-armistice-cs35L. 
+The outputted year was in the future, probably because the time stamp of very old files gets wrapped around to future dates.
+
+Commands:
+$ cd
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice-cs35L
+$ touch now
+$ sleep 1
+$ touch now1
+$ TZ=UTC0 ~/coreutils-with-bug/coreutils_install/bin/ls -lt --full-time wwi-armistice-cs35L now now1
+-rw-r--r-- 1 markn engugrad 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice-cs35L
+-rw-r--r-- 1 markn engugrad 0 2020-02-03 23:44:25.622773000 +0000 now1
+-rw-r--r-- 1 markn engugrad 0 2020-02-03 23:44:18.774141000 +0000 now

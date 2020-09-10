@@ -1,0 +1,151 @@
+lab8.txt
+
+1.
+To get how much disk space is used to represent ~eggert/src/gnu/emacs-CS-35L I 
+cd into the directory. Then I ran 'du' command on that directory, and the Git 
+repository. I used -sh option for the current directory for readability.
+
+$ cd ~eggert/src/gnu/emacs-CS-35L 
+$ du -sh .
+$ du -sh .git
+
+The working directory consumes 509M and the Git repository consumes 350M. The 
+file that consumes the most in the Git repository is ./git/objects/pack because
+it contains all the compressed files from all the different commits.
+
+2.
+I got the number of local and remote branches to the repository with git branch
+command. Since origin/HEAD is not a branch, I subtracted one.
+
+Remote branches: 176
+$ git branch -r | wc -l
+
+Local branches: 176
+$ git branch | wc -l
+
+3.
+There is only one remote repository and it is origin. It is located in 
+refs/remotes/
+
+Commands:
+$ git remote
+$ find -d -name origin
+
+4.
+To get the 10 local branches most recently committed to, I used for-each-ref
+command. Then I sorrted by commit date from refs/heads/ since I want only
+local branches. Lastly I added a count argument.
+
+Command:
+$ git for-each-ref --sort=committerdate refs/heads/ --count=10
+
+
+5448c0cce64b7f5277c820dcd3cd839f9388e241 commit	refs/heads/other-branches/miles-orphaned-changes
+f4c1c47c5b311c19b4cd0c3296783fc83b6c19b9 commit	refs/heads/old-branches/branch-5_8
+71c9ec5139c8cacdcdcc499a72f3800f1b84000a commit	refs/heads/other-branches/gerd_0001
+f57c4de274087f802f52587b362acc2cee4c7833 commit	refs/heads/other-branches/custom_themes
+f1f65349f47be2982fc2dfb3847c730e520703f6 commit	refs/heads/other-branches/gerd_int
+1cda365bcc8ffdc03ea705be1ca0860e56149944 commit	refs/heads/old-branches/gerd_defvaralias
+086514436a4cbc004a43a4ab331e29e3ad9da835 commit	refs/heads/other-branches/patches_21_0
+3efcf1ddcd36f63a94845e8df2135ad02706fe8e commit	refs/heads/other-branches/gerd_big
+f0643701da91a91f0c36dc356e00070f38af9ebe commit	refs/heads/other-branches/gerd_dbe
+2c92b538e6b484cc731fa8d2225ed16459e9848c commit	refs/heads/other-branches/fx-branch
+7d49e53b2dffd9e29bff2dd78825e1d51bc5b697 commit	refs/heads/other-branches/VENDOR
+
+
+
+5.
+To get the number of commits in the master branch, I ran rev-list.
+
+Command:
+$ git rev-list --count master
+139583
+
+
+6.
+I got the percentage of commits in any branch also in master branch. I got the
+total number of commits and compared to the result from the last step.
+
+Command:
+$ git rev-list --all --count
+143910
+
+139583/143910 = 97.0% commits are also in master branch
+
+
+7.
+I used shortlog to get the 10 most authored people since 2013. The command 
+includes the number of commits as well.
+
+Command:
+$ git shortlog -s -n --since="2013"
+
+  3627  Eli Zaretskii
+  3519  Paul Eggert
+  3424  Glenn Morris
+  1806  Lars Ingebrigtsen
+  1725  Stefan Monnier
+  1511  Michael Albinus
+   611  Dmitry Gutov
+   576  Noam Postavsky
+   464  Alan Mackenzie
+   455  Juri Linkov
+
+
+8.
+I opened up XQuartz, and then logged onto seasnet with the less secure ssh -X.
+Then I used the gitk command to visualize the git structure.
+
+Commands:
+$ ssh -X markn@lnxsrv07.seas.ucla.edu
+$ export PATH=/usr/local/cs/bin:$PATH
+$ cd ~eggert/src/gnu/emacs-CS-35L
+$ gitk
+
+
+ |
+...
+ |
+4ea37c2b8b0c5a68fde59770c3536195e0972217
+ | \
+ |  \
+977cd6cb28a37744966ec62f70cf62659f6f302a
+ |    \
+ |    625cee531623feddbe3174fad52c7db96ec60bb3
+ |      \
+...     ...
+ |       |
+ |      5490ccc5ebf39759dfd084bbd31f464701a3e775
+ |      / \ 
+ |    ... ...
+ |    /|    \
+ |   / |     \
+ |  /  |      \
+0c06b93c1e467debd401eb0b3be4652fde14fa95
+ |     |       |
+...   ...     ...
+ |    820739bbb572b30b6ce45756c9960e48dca859af
+ |     /\       \
+ |    /  \       \ 
+ |   |   00e4e3e9d273a193620c3a4bb4914e555cb8e343
+ |   |    |\       \
+ |   |    | \       \
+ |   |    | ...      \
+ |   |    |  49cd561dc62ea6b3fbedab7aef0f020733f4cf09
+ |   |    |   /\      |
+ |   |    |  /  |     |
+ |   L____L /   |     |
+ |  /|    |    /      |
+ | / |    |   /       |
+ abcb2e62dae6aa26308f7ac9efc89247f89cbe65
+ |   |    |  |        |
+ |   |    | /         |
+... ...  ....        ...
+ |   |   /|           |
+ |  _L__/ |           |
+ | / |    |           |
+98ac36efe4ce4bd3a0bca76fc73ce6c7abaa4371
+ |   |    |           |
+ |   |    |           |
+... ...  ...         ...
+

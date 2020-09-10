@@ -1,0 +1,146 @@
+lab7.txt
+
+1.
+To get a copy of Diffutils repository in Git format, I used the 'git clone' 
+command.
+$ git clone ~eggert/src/gnu/diffutils
+
+2.
+I got a log of changes to Diffutils' master branch with the 'git log' command,
+which I stored in my file git-log.txt
+$ cd diffutils
+$ git log > git-log.txt
+
+3.
+I then generated tags for Diffutils using 'git tag', and stored it in my file
+git-tags.txt
+$ git tag > git-tags.txt
+
+4.
+To find the commit titled "maint: quote  'like this' or "like this", not `like 
+this'", I opened 'git-log.txt' in emacs, and searched for the title. The git
+commit was: 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+To create a patch, I used 'git show', and stored it into quote-patch.txt.
+$ emacs git-log.txt
+C-s m a i n t :   q u o t e
+$ git show 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f > quote-patch.txt
+
+5.
+I check out version 3.0 of Diffutils from my repository using 'git checkout' 
+command.
+$ git checkout v3.0
+
+6.
+To apply my patch file, used the patch command, to version 3.0. Some of the 
+files were ignored during the patch, and some failed, but no errors.
+$ patch -p1 < quote-patch.txt
+
+7.
+To get an overview of what happened, I used git status.
+$ git status
+
+8.
+I read how to use the Emacs function vc-diff (C-x v =) and vc-revert (C-x v u).
+
+9.
+Then, I reverted all the changes to the files other than the .c files using 
+vc-revert.
+$ emacs [file name]
+C-x v =
+C-x v u
+y e s RET
+
+I did this series of commands for each of the following files:
+NEWS
+README
+TODO
+doc/diagmeet.note
+ms/config.bat
+ms/config.site
+po/en.po
+src/diff.h
+src/system.h
+tests/help-version
+
+Then I reverted the changes to the .c files, but only changed the commented
+strings. I opened up emacs, and used diff apply hunk command for the files:
+src/analyze.c
+src/cmp.c
+src/context.c
+src/diff.c
+src/diff3.c
+src/dir.c
+src/ifdef.c
+src/io.c
+src/sdiff.c
+src/side.c
+src/util.c
+
+Commands:
+$ emacs [file]
+C-x v =
+C-u C-c C-a
+
+
+10.
+I examined the files src/*.c.rej, and copied the rejected patches to the 
+corresponding .c files. There were only 2 files, src/diff3.c and sr/diff.c. I
+found the locations of the rejected patches and manually applied the patch, 
+changing ` to '
+$ emacs src/*.c.rej
+C-c C-c
+
+
+11.
+Next I removed all the untracked files, by using the clean command. I added 
+the -f option to force this command.
+$ git clean -f
+
+12.
+I ran status command to check the modified files. I then ran the git diff 
+command, and stored it in quote-3.0-patch.txt.
+$ git status
+$ git diff > quote-3.0-patch.txt
+
+13.
+I then built the modified version of Diffutils. I ran the bootstrap command
+and then applied the additional patch given. I then configured the software
+with the configure command and built it with the make command.
+$ ./bootstrap
+$ wget http://web.cs.ucla.edu/classes/winter20/cs35L/assign/diffutils-gets.diff
+$ patch -p0 < diffutils-gets.diff
+$ ./configure
+$ make
+$ make check
+
+Then I ran diff to check it outputs without ` which I manually checked with:
+$ diff . -
+diff: cannot compare '-' to a directory
+
+Then redirected the output of "diff --help" and used emacs to search for `
+$ diff --help > help.txt
+$ cd
+
+14.
+To compare the source code of Diffutils 3.0 and the source code of my modified
+version, I used the  diff command. I put the former source code into my 
+directory diffutils-3.0, and the other source code into diffutils-3.0-patch.
+$ git clone https://git.savannah.gnu.org/git/diffutils.git diffutils-3.0
+$ cd diffutils-3.0
+$ git checkout 'v3.0'
+
+Now I put my modified version in diffutils-3.0-patch:
+$ cd
+$ mkdir diffutils-3.0-patch
+$ cp diffutils/src/*.c diffutils-3.0-patch/
+
+Next, I compared the two files with diff command given:
+$ ./diffutils/src/diff -pru diffutils-3.0/src diffutils-3.0-patch >
+ quote-3.0-test.txt
+
+
+15.
+I used diff to compare the contents of quote-3.0-test.txt and 
+quote-3.0-patch.txt, which are not identical, although the differences are 
+inocuous.
+$ diff -u quote-3.0-test.txt ./diffutils/quote-3.0-patch.txt
